@@ -4,8 +4,8 @@
 #include <vector>
 #include <sys/stat.h>
 #include <sstream>
-#include "parser.h"
-#include "fs.h"
+#include "../bergh/parser.h"
+#include "../bergh/fs.h"
 
 bool shouldRebuild(const std::vector<std::string>& sources, const std::string& target) {
     if (!fileExists(target)) return true;
