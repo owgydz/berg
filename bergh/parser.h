@@ -1,25 +1,17 @@
-#include "parser.h"
-#include <fstream>
-#include <sstream>
+#pragma once
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-bool BergParser::parseFile(const std::string& filename) {
-    std::ifstream file(filename);
-    if (!file) return false;
+class BergParser {
+public:
+    bool parseFile(const std::string& filename);
+    std::string getValue(const std::string& key) const;
+    std::vector<std::string> getSources() const;
+    std::string getCommand() const;
 
-    std::string line;
-    while (std::getline(file, line)) {
-        size_t pos = line.find(':');
-        if (pos == std::string::npos) continue;
-        
-        std::string key = line.substr(0, pos);
-        std::string value = line.substr(pos + 1);
-        data[key] = value;
-    }
-
-    return true;
-}
-
-std::string BergParser::getValue(const std::string& key) const {
-    auto it = data.find(key);
-    return it != data.end() ? it->second : "";
-}
+private:
+    std::string target;
+    std::vector<std::string> sources;
+    std::string command;
+};
