@@ -1,4 +1,6 @@
-#include "parser.h"
+// Parser for .berg files
+
+#include "../bergh/parser.h"
 #include <fstream>
 #include <sstream>
 
