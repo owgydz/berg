@@ -1,5 +1,10 @@
 # Berg Build System
 
+**A quick note:**
+- This is only a very tiny hobby project. Do not use this for high levels of software. Small projects only. If you want to use it for big projects, go ahead.
+
+
+
 ## Overview
 
 Berg is a very tiny build system focused on simplicity and transparency, inspired by Ninja. It is designed to provide quick feedback during the build process with clear, verbose logging to help developers understand what's happening behind the scenes.
