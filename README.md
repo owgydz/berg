@@ -78,4 +78,4 @@ Berg tracks file modification times and only rebuilds targets when the source fi
 Berg is open-source and contributions are welcome! If you have suggestions or bug reports, please open an issue or submit a pull request.
 
 License
-Berg is licensed under the Mozilla Public License, v2.0. See the LICENSE file for more details.
+Berg is licensed under the Apache License, v2.0. See the LICENSE file for more details.
