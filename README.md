@@ -28,7 +28,6 @@ Berg operates on a project configuration file (autogen at build.berg), where you
 
 ## Commands
 1. `build`
-
 Builds the target specified in the build.berg file. Rebuilds only if necessary (e.g., if source files have changed). Run via:
 `berg build`
 
@@ -41,7 +40,7 @@ Checks if the target is up to date. Prints whether the target needs rebuilding o
 `berg status`
 
 4. `init`
-Initialize a new Berg project. You can optionally specify a custom target file with the command flag -t.
+Initialize a new Berg project. You can optionally specify a custom target file with the command flag `-t.`
 
 `./berg init [-t <target-file>]`
 
