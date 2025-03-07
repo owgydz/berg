@@ -2,7 +2,7 @@
 
 ## Overview
 
-Berg is a fast, transparent, and a lightweight build system inspired by Ninja. It is designed to provide quick feedback during the build process with clear, verbose logging to help developers understand what's happening behind the scenes.
+Berg is a very tiny build system focused on simplicity and transparency, inspired by Ninja. It is designed to provide quick feedback during the build process with clear, verbose logging to help developers understand what's happening behind the scenes.
 
 ## Features
 
