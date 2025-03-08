@@ -1,6 +1,5 @@
-
-#ifndef BERG_INTERPRETER_H
-#define BERG_INTERPRETER_H
+#ifndef INTERPRETER_H
+#define INTERPRETER_H
 
 #include <string>
 #include <vector>
@@ -10,21 +9,21 @@ namespace Berg {
 
 class Interpreter {
 public:
-    explicit Interpreter(const std::string& filename);
-
+    Interpreter(const std::vector<std::string>& files);
     bool parse();
-    std::unordered_map<std::string, std::vector<std::string>> getTargets() const;
     bool isValid() const;
+    std::unordered_map<std::string, std::vector<std::string>> getTargets() const;
 
 private:
-    std::string filename;
-    std::unordered_map<std::string, std::vector<std::string>> targets;
-    bool valid;
-
-    // Helper function to trim whitespace
+    std::vector<std::string> files;
+    bool isValidFile(const std::string& file);
+    bool parseFile(const std::string& file);
     std::string trim(const std::string& str);
+    bool parseTargetLine(const std::string& line, const std::string& target);
+    bool isParsed;
+    std::unordered_map<std::string, std::vector<std::string>> targets;
 };
 
 } // namespace Berg
 
-#endif // BERG_INTERPRETER_H
+#endif // INTERPRETER_H

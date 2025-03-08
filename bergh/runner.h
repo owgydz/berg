@@ -4,7 +4,7 @@
 #ifndef BERG_RUNNER_H
 #define BERG_RUNNER_H
 
-#include "interpreter.h"
+#include "interpretor.h"
 #include <string>
 
 namespace Berg {

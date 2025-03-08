@@ -1,4 +1,4 @@
-#include "../bergh/interpreter.h"
+#include "../bergh/interpretor.h"
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -6,19 +6,44 @@
 
 namespace Berg {
 
-Interpreter::Interpreter(const std::string& filename) 
-    : filename(filename), valid(false) {}
+Interpreter::Interpreter(const std::vector<std::string>& files) 
+    : files(files), isParsed(false) {}
 
 bool Interpreter::parse() {
-    std::ifstream file(filename);
-    if (!file) {
-        std::cerr << "Error: Could not open " << filename << "\n";
+    targets.clear();
+    for (const auto& file : files) {
+        if (!parseFile(file)) {
+            return false;
+        }
+    }
+    isParsed = true;
+    return true;
+}
+
+bool Interpreter::isValid() const {
+    return isParsed;
+}
+
+std::unordered_map<std::string, std::vector<std::string>> Interpreter::getTargets() const {
+    return targets;
+}
+
+bool Interpreter::isValidFile(const std::string& file) {
+    std::ifstream f(file);
+    return f.good();
+}
+
+bool Interpreter::parseFile(const std::string& file) {
+    if (!isValidFile(file)) {
+        std::cerr << "Error: File not found - " << file << "\n";
         return false;
     }
 
+    std::ifstream inFile(file);
     std::string line;
     std::string currentTarget;
-    while (std::getline(file, line)) {
+
+    while (std::getline(inFile, line)) {
         line = trim(line);
 
         // Skip empty lines or comments
@@ -38,16 +63,7 @@ bool Interpreter::parse() {
         }
     }
 
-    valid = true;
     return true;
-}
-
-std::unordered_map<std::string, std::vector<std::string>> Interpreter::getTargets() const {
-    return targets;
-}
-
-bool Interpreter::isValid() const {
-    return valid;
 }
 
 std::string Interpreter::trim(const std::string& str) {

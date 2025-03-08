@@ -6,6 +6,9 @@
 #include <sstream>
 #include "../bergh/parser.h"
 #include "../bergh/fs.h"
+#include "../bergh/interpretor.h"   
+#include "../bergh/runner.h"
+
 
 bool shouldRebuild(const std::vector<std::string>& sources, const std::string& target) {
     if (!fileExists(target)) return true;
@@ -60,10 +63,11 @@ void printHelp() {
 }
 
 void printVersion() {
-    std::cout << "\nBerg Build System v1.0.59122\n\n"
-              << "Creation of this project was inspired by Ninja.\n"
+    std::cout << "\nBerg Build System v1.1.13287\n"
+              << "Current BTB (build the berg) version: v0.6.12471.9\n\n"
+              << "The creation of this project was inspired by Ninja.\n"
               << "View here: https://github.com/ninja-build/ninja\n\n"
-              << "This project was led by Owen Gaydosz and the Bluegill Studios Berg team.\n"
+              << "This project is led by Owen Gaydosz and the Bluegill Studios Berg team.\n"
               << "View the source code here: https://github.com/owgydz/berg\n\n";
 }
 
@@ -71,8 +75,8 @@ void initProject(const std::string& target) {
     std::ofstream buildFile(target);
     if (buildFile.is_open()) {
         buildFile << "target: my_program\n"
-                  << "source: main.cpp utils.cpp\n"
-                  << "command: g++ -o my_program main.cpp utils.cpp\n";
+                  << "source:\n"
+                  << "command: g++ -o my_program\n";
         buildFile.close();
         std::cout << "Initialized project with target file: " << target << std::endl;
     } else {
@@ -153,6 +157,25 @@ int main(int argc, char* argv[]) {
         }
 
         initProject(target);
+    } else if (command == "tar") {
+        if (argc < 3 || argv[1] != std::string("tar")) {
+            std::cerr << "Usage: berg tar <target> <file1> [file2] ...\n";
+            return 1;
+        }
+
+        std::vector<std::string> files(argv + 2, argv + argc);
+        Berg::Interpreter interpreter(files);
+
+        if (!interpreter.parse()) {
+            return 1;
+        }
+
+        Berg::Runner runner(interpreter);
+        if (!runner.executeTarget(argv[2])) {
+            return 1;
+        }
+
+        return 0;
     } else {
         std::cerr << "Unknown command: " << command << std::endl;
         return 1;
