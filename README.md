@@ -1,7 +1,7 @@
 # Berg Build System
 
 **A quick note:**
-- This is only a very tiny hobby project. Do not use this for high levels of software. Small projects only. If you want to use it for big projects, go ahead.
+- As of v1.0.59122: This is only a very tiny hobby project. Do not use this for high levels of software. Small projects only. If you want to use it for big projects, go ahead.
 
 
 
