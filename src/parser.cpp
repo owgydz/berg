@@ -1,6 +1,53 @@
 #include "../bergh/parser.h"
 #include <fstream>
 #include <sstream>
+#include <iostream>
+#include <vector>
+
+// Function to check if a file exists
+bool fileExists(const std::string& filename) {
+    std::ifstream file(filename);
+    return file.good();
+}
+
+// Function to execute the build command for the target
+void executeTarget(const std::string& target) {
+    // Implementation of the build command execution
+    std::cout << "Executing build command for target: " << target << "\n";
+    // Add your build command execution logic here
+}
+
+void tar(std::vector<std::string>& args) {
+    if (args.size() < 2) {
+        std::cerr << "Usage: berg tar <target> <file1> [file2] ...\n";
+        return;
+    }
+
+    std::string target = args[0];  // The first argument is the target
+    std::string buildFile = args[1]; // The second argument is the build file
+
+    // Process the target and build file properly.
+    if (!fileExists(buildFile)) {
+        std::cerr << "Error: Build file not found - " << buildFile << "\n";
+        return;
+    }
+
+    // Load and parse the build file
+    std::ifstream file(buildFile);
+    std::string line;
+    while (std::getline(file, line)) {
+        // Look for the target in the build file and execute it
+        if (line.find("target " + target) != std::string::npos) {
+            // Execute the build command for the target
+            std::cout << "Building target: " << target << "\n";
+            // Call the function to execute the build command for the target
+            executeTarget(target);
+            return;
+        }
+    }
+
+    std::cerr << "Error: Target not found - " << target << "\n";
+}
 
 bool BergParser::parseFile(const std::string& filename) {
     std::ifstream file(filename);
