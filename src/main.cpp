@@ -6,9 +6,7 @@
 #include <sstream>
 #include "../bergh/parser.h"
 #include "../bergh/fs.h"
-#include "../bergh/interpretor.h"   
-#include "../bergh/runner.h"
-
+#include "../bergh/option.h"
 
 bool shouldRebuild(const std::vector<std::string>& sources, const std::string& target) {
     if (!fileExists(target)) return true;
@@ -54,8 +52,8 @@ void status(const std::vector<std::string>& sources, const std::string& target) 
 void printHelp() {
     std::cout << "\nUsage: berg <command>\n\n"
               << "Commands:\n"
-              << "  build    - Build the target\n"
-              << "  clean    - Remove the target file\n"
+              << "  build    - Build the .berg file.\n"
+              << "  clean    - Remove the .berg file's targets\n"
               << "  status   - Check if the target is up to date\n"
               << "  init     - Initialize a new project (with optional target file)\n"
               << "  help     - Show this help message\n"
@@ -63,20 +61,20 @@ void printHelp() {
 }
 
 void printVersion() {
-    std::cout << "\nBerg Build System v1.1.13287\n"
-              << "Current BTB (build the berg) version: v0.6.12471.9\n\n"
-              << "The creation of this project was inspired by Ninja.\n"
+    std::cout << "\nBerg Build System v1.1.4194.21\n\n"
+              << "Creation of this project was inspired by Ninja.\n"
               << "View here: https://github.com/ninja-build/ninja\n\n"
-              << "This project is led by Owen Gaydosz and the Bluegill Studios Berg team.\n"
+              << "This project was led by Owen Gaydosz and the Bluegill Studios Berg team.\n"
               << "View the source code here: https://github.com/owgydz/berg\n\n";
 }
 
 void initProject(const std::string& target) {
     std::ofstream buildFile(target);
     if (buildFile.is_open()) {
-        buildFile << "target: my_program\n"
-                  << "source:\n"
-                  << "command: g++ -o my_program\n";
+        buildFile << "// Berg build file template.\n"
+                  << "target: sample\n"
+                  << "source: main.cpp\n"
+                  << "command: g++ -o sample main.cpp\n";
         buildFile.close();
         std::cout << "Initialized project with target file: " << target << std::endl;
     } else {
@@ -94,9 +92,26 @@ int main(int argc, char* argv[]) {
 
     if (command == "build") {
         BergParser parser;
-        if (!parser.parseFile("build.berg")) {
-            std::cerr << "Error: Could not read build.berg" << std::endl;
+        OptionManager optionManager;  
+        if (!parser.parseFile("MAIN.berg")) {
+            std::cerr << "Error: Could not read the Berg file" << std::endl;
             return 1;
+        }
+
+        // Option handling. 
+        if (argc > 2) {
+            for (int i = 2; i < argc; ++i) {
+                if (std::string(argv[i]).find("-opt") == 0) {
+                    std::string optionName = std::string(argv[i]).substr(5);
+                    if (optionManager.hasOption(optionName)) {
+                        std::cout << "Using option: " << optionName << "\n";
+                        // Apply the option.
+                    } else {
+                        std::cerr << "Build option not found. Did you make a typo?\n";
+                        return 1;
+                    }
+                }
+            }
         }
 
         std::string target = parser.getValue("target");
@@ -104,7 +119,7 @@ int main(int argc, char* argv[]) {
         std::string buildCommand = parser.getCommand();
 
         if (target.empty() || buildCommand.empty()) {
-            std::cerr << "Error: Invalid build.berg file" << std::endl;
+            std::cerr << "Error: Invalid .berg file. Check your file for errors." << std::endl;
             return 1;
         }
 
@@ -123,8 +138,8 @@ int main(int argc, char* argv[]) {
         }
     } else if (command == "clean") {
         BergParser parser;
-        if (!parser.parseFile("build.berg")) {
-            std::cerr << "Error: Could not read build.berg" << std::endl;
+        if (!parser.parseFile("MAIN.berg")) {
+            std::cerr << "Error: Could not read the .berg file" << std::endl;
             return 1;
         }
 
@@ -132,8 +147,8 @@ int main(int argc, char* argv[]) {
         clean(target);
     } else if (command == "status") {
         BergParser parser;
-        if (!parser.parseFile("build.berg")) {
-            std::cerr << "Error: Could not read build.berg" << std::endl;
+        if (!parser.parseFile("MAIN.berg")) {
+            std::cerr << "Error: Could not read the Berg file" << std::endl;
             return 1;
         }
 
@@ -157,25 +172,6 @@ int main(int argc, char* argv[]) {
         }
 
         initProject(target);
-    } else if (command == "tar") {
-        if (argc < 3 || argv[1] != std::string("tar")) {
-            std::cerr << "Usage: berg tar <target> <file1> [file2] ...\n";
-            return 1;
-        }
-
-        std::vector<std::string> files(argv + 2, argv + argc);
-        Berg::Interpreter interpreter(files);
-
-        if (!interpreter.parse()) {
-            return 1;
-        }
-
-        Berg::Runner runner(interpreter);
-        if (!runner.executeTarget(argv[2])) {
-            return 1;
-        }
-
-        return 0;
     } else {
         std::cerr << "Unknown command: " << command << std::endl;
         return 1;
