@@ -3,7 +3,7 @@
 #include <cstdlib>
 #include "../btbh/runner.h"   
 #include "../btbh/depend.h"
-#include "../btbh/parser.h"  // Assuming a parser is available to parse the build.berg file
+#include "../btbh/parser.h"  
 
 namespace BTB {
 namespace CLI {
@@ -15,7 +15,7 @@ void showHelp() {
               << "  help     - Show this help message\n"
               << "  status   - Check status of build\n"
               << "  clean    - Clean build artifacts\n"
-              << "  version  - Show version\n"
+              << "  ver  - Show version\n"
               << "Use 'btb <command> help' for more details on each command.\n";
 }
 
@@ -32,9 +32,9 @@ void showCommandHelp(const std::string& command) {
     } else if (command == "clean") {
         std::cout << "clean: Cleans the build artifacts.\n";
         std::cout << "Usage: btb clean\n";
-    } else if (command == "version") {
-        std::cout << "version: Shows the version of the tool.\n";
-        std::cout << "Usage: btb version\n";
+    } else if (command == "ver") {
+        std::cout << "ver: Shows the version of the tool.\n";
+        std::cout << "Usage: btb ver\n";
     } else {
         std::cout << "Unknown command: " << command << "\n";
     }
@@ -46,9 +46,9 @@ void build() {
     // Create a Runner instance and execute the build
     Runner runner;
     if (runner.runBuildCommand("build")) {  // Assuming the build command is available as a string
-        std::cout << "Build completed successfully.\n";
+        std::cout << "The build was completed successfully. It should now bee an executable.\n";
     } else {
-        std::cerr << "Build failed.\n";
+        std::cerr << "ERR! Build failed\n";
     }
 }
 
