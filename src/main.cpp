@@ -61,7 +61,7 @@ void printHelp() {
 }
 
 void printVersion() {
-    std::cout << "\nBerg Build System v1.1.4194.21\n\n"
+    std::cout << "\nBerg Build System v1.1.4194.21 BETA\n\n"
               << "Creation of this project was inspired by Ninja.\n"
               << "View here: https://github.com/ninja-build/ninja\n\n"
               << "This project was led by Owen Gaydosz and the Bluegill Studios Berg team.\n"
