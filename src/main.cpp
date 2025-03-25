@@ -255,8 +255,6 @@ int main(int argc, char* argv[]) {
             std::cout << target << " is up to date.\n";
         }
 
-        // Execute post-build script
-        executeScript(postBuildScript);
 
     } else if (command == "clean") {
         BergParser parser;
@@ -277,7 +275,7 @@ int main(int argc, char* argv[]) {
             if (!force) {
                 std::cerr << "Error: Could not read the Berg file" << std::endl;
                 return 1;
-            } else if (verbose, force {
+            } else if (verbose, force) {
                 std::cerr << "Warning: Proceeding despite invalid Berg file due to --force flag" << std::endl;
             }
         }
