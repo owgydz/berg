@@ -72,6 +72,7 @@ void printHelp() {
               << "  help     - Show this help message\n"
               << "  version  - Show version info\n"
               << "  watch    - Watch for file changes and rebuild automatically\n"
+              << "  export   - Export build configuration to specified format\n"
               << "Options:\n"
               << "  --verbose  - Enable verbose output\n";
 }
@@ -149,6 +150,52 @@ void watchFiles(const std::vector<std::string>& sources, const std::string& targ
     }
 
     close(inotifyFd);
+}
+
+void exportBuild(const std::string& format) {
+    BergParser parser;
+    if (!parser.parseFile("build.berg")) {
+        std::cerr << "Error: Could not read build.berg" << std::endl;
+        return;
+    }
+
+    std::string target = parser.getValue("target");
+    std::vector<std::string> sources = parser.getSources();
+    std::string command = parser.getCommand();
+
+    if (format == "ninja") {
+        std::ofstream ninjaFile("build.ninja");
+        if (!ninjaFile) {
+            std::cerr << "Error: Could not create build.ninja" << std::endl;
+            return;
+        }
+        ninjaFile << "rule build_rule\n"
+                  << "  command = " << command << "\n\n"
+                  << "build " << target << ": build_rule " << sources[0];
+        for (size_t i = 1; i < sources.size(); ++i) {
+            ninjaFile << " " << sources[i];
+        }
+        ninjaFile << "\n";
+        ninjaFile.close();
+        std::cout << "Exported build configuration to build.ninja" << std::endl;
+    } else if (format == "cmake") {
+        std::ofstream cmakeFile("CMakeLists.txt");
+        if (!cmakeFile) {
+            std::cerr << "Error: Could not create CMakeLists.txt" << std::endl;
+            return;
+        }
+        cmakeFile << "cmake_minimum_required(VERSION 3.10)\n"
+                  << "project(" << target << ")\n\n"
+                  << "add_executable(" << target;
+        for (const auto& source : sources) {
+            cmakeFile << " " << source;
+        }
+        cmakeFile << ")\n";
+        cmakeFile.close();
+        std::cout << "Exported build configuration to CMakeLists.txt" << std::endl;
+    } else {
+        std::cerr << "Error: Unsupported format '" << format << "'" << std::endl;
+    }
 }
 
 int main(int argc, char* argv[]) {
@@ -260,6 +307,17 @@ int main(int argc, char* argv[]) {
         }
 
         watchFiles(sources, target, buildCommand);
+    } else if (command == "export") {
+        if (argc < 3) {
+            std::cerr << "Error: Missing format for export command" << std::endl;
+            return 1;
+        }
+        std::string format = argv[2];
+        exportBuild(format);
     } else {
         std::cerr << "Unknown command: " << command << std::endl;
-        return 1
+        return 1;
+    }
+
+    return 0;
+}
