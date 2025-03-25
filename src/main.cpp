@@ -14,6 +14,7 @@
 #include "../bergh/option.h"
 
 bool verbose = false;
+bool force = false; // Suppress errors if true
 
 bool shouldRebuild(const std::vector<std::string>& sources, const std::string& target) {
     if (!fileExists(target)) return true;
@@ -78,10 +79,10 @@ void printHelp() {
 }
 
 void printVersion() {
-    std::cout << "\nBerg Build System v1.1.4194.21 BETA\n\n"
+    std::cout << "\nBerg Build System v1.1.41943 \n\n"
               << "Creation of this project was inspired by Ninja.\n"
               << "View here: https://github.com/ninja-build/ninja\n\n"
-              << "This project was led by Owen Gaydosz and the Bluegill Studios Berg team.\n"
+              << "This project is led by Owen Gaydosz and the Bluegill Studios Berg team.\n"
               << "View the source code here: https://github.com/owgydz/berg\n\n";
 }
 
@@ -206,10 +207,11 @@ int main(int argc, char* argv[]) {
 
     std::string command = argv[1];
 
-    // Check for verbose flag
     for (int i = 2; i < argc; ++i) {
         if (std::string(argv[i]) == "--verbose") {
             verbose = true;
+        } else if (std::string(argv[i]) == "--force") {
+            force = true;
         }
     }
 
@@ -217,23 +219,25 @@ int main(int argc, char* argv[]) {
         BergParser parser;
         OptionManager optionManager;
         if (!parser.parseFile("build.berg")) {
-            std::cerr << "Error: Could not read the Berg file" << std::endl;
-            return 1;
+            if (!force) {
+                std::cerr << "Error: Could not read the Berg file" << std::endl;
+                return 1;
+            } else if (verbose) {
+                std::cerr << "Warning: Proceeding despite invalid Berg file due to --force flag" << std::endl;
+            }
         }
-
-        std::string preBuildScript = parser.getValue("pre_build_script");
-        std::string postBuildScript = parser.getValue("post_build_script");
-
-        // Execute pre-build script
-        executeScript(preBuildScript);
 
         std::string target = parser.getValue("target");
         std::vector<std::string> sources = parser.getSources();
         std::string buildCommand = parser.getCommand();
 
         if (target.empty() || buildCommand.empty()) {
+            if (!force) {
             std::cerr << "Error: Invalid .berg file. Check your file for errors." << std::endl;
             return 1;
+            } else {
+            std::cerr << "Warning: Proceeding with build despite invalid .berg file due to --force flag" << std::endl;
+            }
         }
 
         if (verbose)
@@ -257,17 +261,25 @@ int main(int argc, char* argv[]) {
     } else if (command == "clean") {
         BergParser parser;
         if (!parser.parseFile("build.berg")) {
-            std::cerr << "Error: Could not read the .berg file" << std::endl;
-            return 1;
+            if (!force) {
+                std::cerr << "Error: Could not read the .berg file" << std::endl;
+                return 1;
+            } else if (verbose) {
+                std::cerr << "Warning: Proceeding despite invalid Berg file due to --force flag" << std::endl;
+            }
         }
 
         std::string target = parser.getValue("target");
         clean(target);
     } else if (command == "status") {
         BergParser parser;
-        if (!parser.parseFile("MAIN.berg")) {
-            std::cerr << "Error: Could not read the Berg file" << std::endl;
-            return 1;
+        if (!parser.parseFile("build.berg")) {
+            if (!force) {
+                std::cerr << "Error: Could not read the Berg file" << std::endl;
+                return 1;
+            } else if (verbose, force {
+                std::cerr << "Warning: Proceeding despite invalid Berg file due to --force flag" << std::endl;
+            }
         }
 
         std::string target = parser.getValue("target");
@@ -293,8 +305,12 @@ int main(int argc, char* argv[]) {
     } else if (command == "watch") {
         BergParser parser;
         if (!parser.parseFile("build.berg")) {
-            std::cerr << "Error: Could not read the Berg file" << std::endl;
-            return 1;
+            if (!force) {
+                std::cerr << "Error: Could not read the Berg file" << std::endl;
+                return 1;
+            } else if (force, verbose) {
+                std::cerr << "Warning: Proceeding despite invalid Berg file due to --force flag" << std::endl;
+            }
         }
 
         std::string target = parser.getValue("target");
