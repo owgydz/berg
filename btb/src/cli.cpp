@@ -4,6 +4,7 @@
 #include "../btbh/runner.h"   
 #include "../btbh/depend.h"
 #include "../btbh/parser.h"  
+#include "../btbh/sandbox.h"
 
 namespace BTB {
 namespace CLI {
@@ -42,11 +43,26 @@ void showCommandHelp(const std::string& command) {
 
 void build() {
     std::cout << "Building the project...\n";
-    
-    // Create a Runner instance and execute the build
     Runner runner;
-    if (runner.runBuildCommand("build")) {  // Assuming the build command is available as a string
-        std::cout << "The build was completed successfully. It should now bee an executable.\n";
+    BergParser parser;
+    if (!parser.parseFile("build.berg")) {
+        std::cerr << "Error: Could not read build.berg" << std::endl;
+        return;
+    }
+
+    std::string buildCommand = parser.getValue("buildCommand");
+    if (buildCommand.empty()) {
+        std::cerr << "Error: No build command specified in build.berg" << std::endl;
+        return;
+    }
+
+    if (!isCommandSafe(buildCommand)) {
+        std::cerr << "Error: Unsafe build command detected. Aborting build: " << buildCommand << std::endl;
+        return;
+    }
+
+    if (runner.runBuildCommand(buildCommand)) {
+        std::cout << "The build was completed successfully. It should now be an executable.\n";
     } else {
         std::cerr << "ERR! Build failed\n";
     }

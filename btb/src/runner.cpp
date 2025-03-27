@@ -1,10 +1,26 @@
 #include "../btbh/runner.h"
 #include <iostream>
 #include <cstdlib>
+#include "../btbh/sandbox.h"
 
 namespace BTB {
 
+bool isCommandSafe(const std::string& command) {
+    const std::vector<std::string> forbidden = {";", "&", "|", "`", "$(", ">", "<"};
+    for (const auto& token : forbidden) {
+        if (command.find(token) != std::string::npos) {
+            return false;
+        }
+    }
+    return true;
+}
+
 bool Runner::runBuildCommand(const std::string& command) {
+    if (!isCommandSafe(command)) {
+        std::cerr << "Error: Unsafe build command detected. Aborting execution: " << command << std::endl;
+        return false;
+    }
+
     logBuildStep("Running build command: " + command);
     int result = system(command.c_str());
     if (result != 0) {
