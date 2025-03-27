@@ -76,6 +76,7 @@ void printHelp() {
               << "  export   - Export build configuration to specified format\n"
               << "Options:\n"
               << "  --verbose  - Enable verbose output\n";
+              << "  --force    - Suppress errors\n";
 }
 
 void printVersion() {
