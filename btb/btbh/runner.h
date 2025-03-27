@@ -1,3 +1,5 @@
+
+
 #ifndef BTB_RUNNER_H
 #define BTB_RUNNER_H
 
@@ -17,7 +19,7 @@ public:
     // Clean up the build artifacts.
     bool cleanBuildArtifacts();
 
-    // Optionally, checks if a specific target exists, e.g., a binary or library.
+    // Optionally, checks if a specific target exists, for example, a binary or library.
     bool targetExists(const std::string& target);
 
     // Optionally, runs pre-build tasks or checks before invoking the actual build command.
