@@ -23,7 +23,7 @@ Berg is a very tiny build system focused on simplicity and transparency, inspire
    ```
    git clone https://github.com/owgydz/berg.git
    cd berg
-2. Compile the Berg executable (1.0.59xxx only):
+2. Compile the Berg executable:
    ```
    g++ -o berg main.cpp fs.cpp parser.cpp -std=c++17
 3. Ensure that the berg executable is in your PATH or use it directly by running `./berg.`
